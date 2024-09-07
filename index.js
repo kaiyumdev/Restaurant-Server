@@ -46,6 +46,11 @@ async function run() {
       res.json(result);
     });
 
+    app.get("/carts", async (req, res) => {
+      const result = await cartCollection.find().toArray();
+      res.json(result);
+    });
+
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
