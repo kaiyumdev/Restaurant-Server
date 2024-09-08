@@ -30,6 +30,7 @@ async function run() {
     const reviewCollection = client.db("restuarntDB").collection("reviews");
     const cartCollection = client.db("restuarntDB").collection("carts");
 
+    //usrs related api methods
     app.post("/users", async (req, res) => {
       const user = req.body;
       const query = { email: user.email };
@@ -42,16 +43,19 @@ async function run() {
       res.json(result);
     });
 
+    //menu routes
     app.get("/menu", async (req, res) => {
       const result = await menuCollection.find().toArray();
       res.json(result);
     });
 
+    //reviews routes
     app.get("/reviews", async (req, res) => {
       const result = await reviewCollection.find().toArray();
       res.json(result);
     });
 
+    //carts related routes
     app.post("/carts", async (req, res) => {
       const cartItem = req.body;
       const result = await cartCollection.insertOne(cartItem);
