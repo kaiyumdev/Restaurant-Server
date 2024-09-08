@@ -43,6 +43,12 @@ async function run() {
       res.json(result);
     });
 
+    app.get("/users", async (req, res) => {
+      const result = await userCollection.find().toArray();
+      console.log(result);
+      res.json(result);
+    });
+
     //menu routes
     app.get("/menu", async (req, res) => {
       const result = await menuCollection.find().toArray();
