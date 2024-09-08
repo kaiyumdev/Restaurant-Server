@@ -25,9 +25,17 @@ async function run() {
     await client.connect();
 
     // Define your database and collection names here
+    const userCollection = client.db("restuarntDB").collection("users");
     const menuCollection = client.db("restuarntDB").collection("menu");
     const reviewCollection = client.db("restuarntDB").collection("reviews");
     const cartCollection = client.db("restuarntDB").collection("carts");
+
+    app.post("/users", async (req, res) => {
+      const user = req.body;
+      console.log(user);
+      const result = await userCollection.insertOne(user);
+      res.json(result);
+    });
 
     app.get("/menu", async (req, res) => {
       const result = await menuCollection.find().toArray();
@@ -49,7 +57,6 @@ async function run() {
       const email = req.query.email;
       const query = { email: email };
       const result = await cartCollection.find(query).toArray();
-      console.log(result);
       res.json(result);
     });
 
