@@ -31,6 +31,14 @@ async function run() {
     const reviewCollection = client.db("restuarntDB").collection("reviews");
     const cartCollection = client.db("restuarntDB").collection("carts");
 
+    //jwt related apis
+    app.post("/jwt", async (req, res) => {
+      const user = req.body;
+      const token = jwt.sign(user, process.env.ACCESS_TOKEN, {
+        expiresIn: "1h",
+      });
+    });
+
     //usrs related api methods
     app.post("/users", async (req, res) => {
       const user = req.body;
