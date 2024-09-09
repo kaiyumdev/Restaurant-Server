@@ -69,7 +69,7 @@ async function run() {
       next();
     };
 
-    app.get("/users", verityToken, async (req, res) => {
+    app.get("/users", verityToken, verifyAdmin, async (req, res) => {
       const result = await userCollection.find().toArray();
       res.send(result);
     });
