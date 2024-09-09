@@ -37,7 +37,7 @@ async function run() {
       const token = jwt.sign(user, process.env.ACCESS_TOKEN, {
         expiresIn: "1h",
       });
-      res.json({ token });
+      res.send({ token });
     });
 
     const verityToken = (req, res, next) => {
@@ -59,7 +59,21 @@ async function run() {
 
     app.get("/users", verityToken, async (req, res) => {
       const result = await userCollection.find().toArray();
-      res.json(result);
+      res.send(result);
+    });
+
+    app.get("/users/admin/:email", verityToken, async (req, res) => {
+      const email = req.params.email;
+      if (email !== req.decoded.email) {
+        return res.status(403).send({ message: "unauthorized access" });
+      }
+      const query = { emai: email };
+      const user = await userCollection.findOne(query);
+      const admin = false;
+      if (user) {
+        admin = user?.role === "admin";
+      }
+      res.send({ admin });
     });
 
     //usrs related api methods
@@ -72,7 +86,7 @@ async function run() {
         return;
       }
       const result = await userCollection.insertOne(user);
-      res.json(result);
+      res.send(result);
     });
 
     app.patch("/users/admin/:id", async (req, res) => {
@@ -80,47 +94,47 @@ async function run() {
       const filter = { _id: new ObjectId(id) };
       const updateDoc = { $set: { role: "admin" } };
       const result = await userCollection.updateOne(filter, updateDoc);
-      res.json(result);
+      res.send(result);
     });
 
     app.delete("/users/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await userCollection.deleteOne(query);
-      res.json(result);
+      res.send(result);
     });
 
     //menu routes
     app.get("/menu", async (req, res) => {
       const result = await menuCollection.find().toArray();
-      res.json(result);
+      res.send(result);
     });
 
     //reviews routes
     app.get("/reviews", async (req, res) => {
       const result = await reviewCollection.find().toArray();
-      res.json(result);
+      res.send(result);
     });
 
     //carts related routes
     app.post("/carts", async (req, res) => {
       const cartItem = req.body;
       const result = await cartCollection.insertOne(cartItem);
-      res.json(result);
+      res.send(result);
     });
 
     app.get("/carts", async (req, res) => {
       const email = req.query.email;
       const query = { email: email };
       const result = await cartCollection.find(query).toArray();
-      res.json(result);
+      res.send(result);
     });
 
     app.delete("/carts/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await cartCollection.deleteOne(query);
-      res.json(result);
+      res.send(result);
     });
 
     console.log(
