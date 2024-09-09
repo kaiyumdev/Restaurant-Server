@@ -57,6 +57,11 @@ async function run() {
       });
     };
 
+    app.get("/users", verityToken, async (req, res) => {
+      const result = await userCollection.find().toArray();
+      res.json(result);
+    });
+
     //usrs related api methods
     app.post("/users", async (req, res) => {
       const user = req.body;
@@ -75,11 +80,6 @@ async function run() {
       const filter = { _id: new ObjectId(id) };
       const updateDoc = { $set: { role: "admin" } };
       const result = await userCollection.updateOne(filter, updateDoc);
-      res.json(result);
-    });
-
-    app.get("/users", verityToken, async (req, res) => {
-      const result = await userCollection.find().toArray();
       res.json(result);
     });
 
