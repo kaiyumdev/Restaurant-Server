@@ -40,6 +40,15 @@ async function run() {
       res.json({ token });
     });
 
+    const verityToken = (req, res, next) => {
+      console.log("inside verify token", req.headers);
+      if (!req.headers.authorization) {
+        res.status(401).send({ message: "forbidden access token" });
+        return;
+      }
+      const token = req.headers.authorization.split(" ")[1];
+    };
+
     //usrs related api methods
     app.post("/users", async (req, res) => {
       const user = req.body;
