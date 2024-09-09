@@ -65,11 +65,12 @@ async function run() {
     app.get("/users/admin/:email", verityToken, async (req, res) => {
       const email = req.params.email;
       if (email !== req.decoded.email) {
-        return res.status(403).send({ message: "unauthorized access" });
+        res.status(403).send({ message: "Unauthorized access" });
+        return;
       }
-      const query = { emai: email };
+      const query = { email: email };
       const user = await userCollection.findOne(query);
-      const admin = false;
+      let admin = falce;
       if (user) {
         admin = user?.role === "admin";
       }
