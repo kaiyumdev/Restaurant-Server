@@ -52,7 +52,7 @@ async function run() {
           res.status(403).send({ message: "Invalid access token" });
           return;
         }
-        req.user = decoded;
+        req.decoded = decoded;
         next();
       });
     };
