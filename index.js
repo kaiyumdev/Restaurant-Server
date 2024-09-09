@@ -41,12 +41,20 @@ async function run() {
     });
 
     const verityToken = (req, res, next) => {
-      console.log("inside verify token", req.headers);
+      console.log("inside verify token", req.headers.authorization);
       if (!req.headers.authorization) {
         res.status(401).send({ message: "forbidden access token" });
         return;
       }
       const token = req.headers.authorization.split(" ")[1];
+      jwt.verify(token, process.env.ACCESS_TOKEN, (err, decoded) => {
+        if (err) {
+          res.status(403).send({ message: "Invalid access token" });
+          return;
+        }
+        req.user = decoded;
+        next();
+      });
     };
 
     //usrs related api methods
@@ -70,10 +78,8 @@ async function run() {
       res.json(result);
     });
 
-    app.get("/users", async (req, res) => {
-      console.log(req.headers);
+    app.get("/users", verityToken, async (req, res) => {
       const result = await userCollection.find().toArray();
-      console.log(result);
       res.json(result);
     });
 
