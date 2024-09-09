@@ -70,7 +70,7 @@ async function run() {
       }
       const query = { email: email };
       const user = await userCollection.findOne(query);
-      let admin = falce;
+      let admin = false;
       if (user) {
         admin = user?.role === "admin";
       }
