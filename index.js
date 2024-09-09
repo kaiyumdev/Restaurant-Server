@@ -43,18 +43,30 @@ async function run() {
     const verityToken = (req, res, next) => {
       console.log("inside verify token", req.headers.authorization);
       if (!req.headers.authorization) {
-        res.status(401).send({ message: "forbidden access token" });
+        res.status(401).send({ message: "Unauthorized access" });
         return;
       }
       const token = req.headers.authorization.split(" ")[1];
       jwt.verify(token, process.env.ACCESS_TOKEN, (err, decoded) => {
         if (err) {
-          res.status(403).send({ message: "Invalid access token" });
+          res.status(401).send({ message: "Unauthorized access" });
           return;
         }
         req.decoded = decoded;
         next();
       });
+    };
+
+    //use varifyAdmin after verifyToken
+    const verifyAdmin = async (req, res, next) => {
+      const email = req.decoded.email;
+      const query = { email: email };
+      const user = await userCollection.findOne(query);
+      const isAdmin = user?.role === "admin";
+      if (!isAdmin) {
+        return res.status(403).send({ message: "forbidden access" });
+      }
+      next();
     };
 
     app.get("/users", verityToken, async (req, res) => {
@@ -65,7 +77,7 @@ async function run() {
     app.get("/users/admin/:email", verityToken, async (req, res) => {
       const email = req.params.email;
       if (email !== req.decoded.email) {
-        res.status(403).send({ message: "Unauthorized access" });
+        res.status(403).send({ message: "Forbidden access" });
         return;
       }
       const query = { email: email };
