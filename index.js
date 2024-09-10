@@ -122,9 +122,15 @@ async function run() {
       res.send(result);
     });
 
-    //menu routes
+    //menu related routes
     app.get("/menu", async (req, res) => {
       const result = await menuCollection.find().toArray();
+      res.send(result);
+    });
+
+    app.post("/menu", async (req, res) => {
+      const menuItem = req.body;
+      const result = await menuCollection.insertOne(menuItem);
       res.send(result);
     });
 
