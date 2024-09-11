@@ -31,6 +31,7 @@ async function run() {
     const menuCollection = client.db("restuarntDB").collection("menu");
     const reviewCollection = client.db("restuarntDB").collection("reviews");
     const cartCollection = client.db("restuarntDB").collection("carts");
+    const paymentCollection = client.db("restuarntDB").collection("payments");
 
     //jwt related apis
     app.post("/jwt", async (req, res) => {
@@ -206,6 +207,13 @@ async function run() {
       res.send({
         clientSecret: paymentIntent.client_secret,
       });
+    });
+
+    app.post("/payments", async (req, res) => {
+      const payment = req.body;
+      const paymentResult = await paymentCollection.insertOne(payment);
+      console.log("Payment Received: ", payment);
+      res.send(paymentResult);
     });
 
     console.log(
