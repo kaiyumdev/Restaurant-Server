@@ -231,6 +231,12 @@ async function run() {
       res.send({ paymentResult, deleteResult });
     });
 
+    //admin-stats or analytics
+    app.get("/admin-stats", async (req, res) => {
+      const users = await userCollection.estimatedDocumentCount();
+      const menuItems = await menuCollection.estimatedDocumentCount();
+    });
+
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
