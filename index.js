@@ -194,6 +194,7 @@ async function run() {
       res.send(result);
     });
 
+    //payment related routes
     app.post("/create-payment-intent", async (req, res) => {
       const { price } = req.body;
       const amount = parseInt(price * 100);
