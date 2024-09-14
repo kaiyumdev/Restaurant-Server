@@ -291,6 +291,44 @@ async function run() {
     //   res.send(result);
     // });
 
+    // app.get("/order-stats", async (req, res) => {
+    //   const result = await paymentCollection
+    //     .aggregate([
+    //       {
+    //         $unwind: "$menuItemIds",
+    //       },
+    //       {
+    //         $lookup: {
+    //           from: "menu",
+    //           let: { menuItemId: "$menuItemIds" },
+    //           pipeline: [
+    //             {
+    //               $match: {
+    //                 $expr: { $eq: ["$_id", { $toObjectId: "$$menuItemId" }] },
+    //               },
+    //             },
+    //           ],
+    //           as: "menuItems",
+    //         },
+    //       },
+    //       {
+    //         $unwind: "$menuItems",
+    //       },
+    //       {
+    //         $group: {
+    //           _id: "$menuItems.category",
+    //           quantity: { $sum: 1 },
+    //           revenue: { $sum: "$menuItems.price" },
+    //         },
+    //       },
+    //     ])
+    //     .toArray();
+
+    //   res.send(result);
+    // });
+
+    const { ObjectId } = require("mongodb");
+
     app.get("/order-stats", async (req, res) => {
       const result = await paymentCollection
         .aggregate([
@@ -319,6 +357,15 @@ async function run() {
               _id: "$menuItems.category",
               quantity: { $sum: 1 },
               revenue: { $sum: "$menuItems.price" },
+            },
+          },
+          {
+            $project: {
+              // Step 5: Format the revenue to two decimal places
+              _id: 0,
+              category: "$_id",
+              quantity: "$quantity",
+              revenue: "$revenue", // Round the revenue to 2 decimal places
             },
           },
         ])
