@@ -275,6 +275,9 @@ async function run() {
               as: "menuItems",
             },
           },
+          {
+            $unwind: "$menuItems",
+          },
         ])
         .toArray();
 
