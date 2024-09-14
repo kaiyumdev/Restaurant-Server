@@ -261,6 +261,36 @@ async function run() {
     });
 
     //using aggregate pipeline
+    // app.get("/order-stats", async (req, res) => {
+    //   const result = await paymentCollection
+    //     .aggregate([
+    //       // {
+    //       //   $unwind: "$menuItemIds",
+    //       // },
+    //       // {
+    //       //   $lookup: {
+    //       //     from: "menu",
+    //       //     localField: "menuItemIds",
+    //       //     foreignField: "_id",
+    //       //     as: "menuItems",
+    //       //   },
+    //       // },
+    //       // {
+    //       //   $unwind: "$menuItems",
+    //       // },
+    //       // {
+    //       //   $group: {
+    //       //     _id: "$menuItems.category",
+    //       //     quantity: { $sum: 1 },
+    //       //     revenue: { $sum: "$menuItems.price" },
+    //       //   },
+    //       // },
+    //     ])
+    //     .toArray();
+
+    //   res.send(result);
+    // });
+
     app.get("/order-stats", async (req, res) => {
       const result = await paymentCollection
         .aggregate([
@@ -270,13 +300,26 @@ async function run() {
           {
             $lookup: {
               from: "menu",
-              localField: "menuItemIds",
-              foreignField: "_id",
+              let: { menuItemId: "$menuItemIds" },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: { $eq: ["$_id", { $toObjectId: "$$menuItemId" }] },
+                  },
+                },
+              ],
               as: "menuItems",
             },
           },
           {
             $unwind: "$menuItems",
+          },
+          {
+            $group: {
+              _id: "$menuItems.category",
+              quantity: { $sum: 1 },
+              revenue: { $sum: "$menuItems.price" },
+            },
           },
         ])
         .toArray();
