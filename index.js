@@ -327,9 +327,7 @@ async function run() {
     //   res.send(result);
     // });
 
-    const { ObjectId } = require("mongodb");
-
-    app.get("/order-stats", async (req, res) => {
+    app.get("/order-stats", verityToken, verifyAdmin, async (req, res) => {
       const result = await paymentCollection
         .aggregate([
           {
