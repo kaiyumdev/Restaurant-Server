@@ -8,6 +8,10 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const formData = require("form-data");
 const Mailgun = require("mailgun.js");
 const mailgun = new Mailgun(formData);
+const mg = mailgun.client({
+  username: "api",
+  key: process.env.MAILGUN_API_KEY || "key-yourkeyhere",
+});
 
 app.use(express.json());
 app.use(cors());
