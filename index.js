@@ -235,6 +235,19 @@ async function run() {
         },
       };
       const deleteResult = await cartCollection.deleteMany(query);
+
+      //send user email about payment confirmation
+      mg.messages
+        .create(process.env.MAIL_SENDING_DOMAIN, {
+          from: "Excited User <mailgun@sandbox-123.mailgun.org>",
+          to: ["test@example.com"],
+          subject: "Hello",
+          text: "Testing some Mailgun awesomness!",
+          html: "<h1>Testing some Mailgun awesomness!</h1>",
+        })
+        .then((msg) => console.log(msg)) // logs response data
+        .catch((err) => console.error(err)); // logs any error
+
       res.send({ paymentResult, deleteResult });
     });
 
