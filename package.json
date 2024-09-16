@@ -15,7 +15,6 @@
     "form-data": "^4.0.0",
     "jsonwebtoken": "^9.0.2",
     "mailgun.js": "^10.2.3",
-    "mailtrap": "^3.4.0",
     "mongodb": "^6.8.0",
     "nodemon": "^3.1.4",
     "stripe": "^16.10.0"

@@ -8,7 +8,6 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const formData = require("form-data");
 const Mailgun = require("mailgun.js");
 const mailgun = new Mailgun(formData);
-const MailtrapClient = require("mailtrap");
 const mg = mailgun.client({
   username: "api",
   key: process.env.MAILGUN_API_KEY || "key-yourkeyhere",
@@ -238,7 +237,20 @@ async function run() {
       const deleteResult = await cartCollection.deleteMany(query);
 
       //send user email about payment confirmation
-
+      mg.messages
+        .create(process.env.MAIL_SENDING_DOMAIN, {
+          from: "Excited User <sandbox5ac71cee64804138bf131e2195d96133.mailgun.org>",
+          to: ["abdulkaiyumfahim.social@gmail.com"],
+          subject: "Thanks for your order confirmation",
+          text: "Testing some Mailgun awesomness!",
+          html: `<div>
+          <h1>Thank you for your order!</h1>
+          <h4>Your transactionId: <strong>${payment.transactionId}</strong></h4>
+          <p>We would like to get your feedback about our foods</p>
+          </div>`,
+        })
+        .then((msg) => console.log(msg)) // logs response data
+        .catch((err) => console.error(err)); // logs any error
       res.send({ paymentResult, deleteResult });
     });
 
@@ -337,21 +349,6 @@ async function run() {
 
     //   res.send(result);
     // });
-
-    // mg.messages
-    //   .create(process.env.MAIL_SENDING_DOMAIN, {
-    //     from: "Excited User <sandbox5ac71cee64804138bf131e2195d96133.mailgun.org>",
-    //     to: ["abdulkaiyumfahim.social@gmail.com"],
-    //     subject: "Thanks for your order confirmation",
-    //     text: "Testing some Mailgun awesomness!",
-    //     html: `<div>
-    //       <h1>Thank you for your order!</h1>
-    //       <h4>Your transactionId: <strong>${payment.transactionId}</strong></h4>
-    //       <p>We would like to get your feedback about our foods</p>
-    //       </div>`,
-    //   })
-    //   .then((msg) => console.log(msg)) // logs response data
-    //   .catch((err) => console.error(err)); // logs any error
 
     app.get("/order-stats", verityToken, verifyAdmin, async (req, res) => {
       const result = await paymentCollection
