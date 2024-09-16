@@ -314,42 +314,6 @@ async function run() {
     //   res.send(result);
     // });
 
-    // app.get("/order-stats", async (req, res) => {
-    //   const result = await paymentCollection
-    //     .aggregate([
-    //       {
-    //         $unwind: "$menuItemIds",
-    //       },
-    //       {
-    //         $lookup: {
-    //           from: "menu",
-    //           let: { menuItemId: "$menuItemIds" },
-    //           pipeline: [
-    //             {
-    //               $match: {
-    //                 $expr: { $eq: ["$_id", { $toObjectId: "$$menuItemId" }] },
-    //               },
-    //             },
-    //           ],
-    //           as: "menuItems",
-    //         },
-    //       },
-    //       {
-    //         $unwind: "$menuItems",
-    //       },
-    //       {
-    //         $group: {
-    //           _id: "$menuItems.category",
-    //           quantity: { $sum: 1 },
-    //           revenue: { $sum: "$menuItems.price" },
-    //         },
-    //       },
-    //     ])
-    //     .toArray();
-
-    //   res.send(result);
-    // });
-
     app.get("/order-stats", verityToken, verifyAdmin, async (req, res) => {
       const result = await paymentCollection
         .aggregate([
