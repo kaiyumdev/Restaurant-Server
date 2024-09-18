@@ -7,7 +7,6 @@ const port = process.env.PORT || 5002;
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const formData = require("form-data");
 const Mailgun = require("mailgun.js");
-const mailgun = new Mailgun(formData);
 
 // const mg = mailgun.client({
 //   username: "api",
