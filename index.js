@@ -8,16 +8,7 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const formData = require("form-data");
 const Mailgun = require("mailgun.js");
 const mailgun = new Mailgun(formData);
-const nodemailer = require("nodemailer");
 
-// Create a transporter object using SMTP transport
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER, // Your email address
-    pass: process.env.EMAIL_PASSWORD, // Your email password or app-specific password
-  },
-});
 // const mg = mailgun.client({
 //   username: "api",
 //   key: process.env.MAILGUN_API_KEY || "key-yourkeyhere",
@@ -261,26 +252,6 @@ async function run() {
       //   })
       //   .then((msg) => console.log(msg)) // logs response data
       //   .catch((err) => console.error(err)); // logs any error
-
-      const mailOptions = {
-        from: "abdulkaiyumfahim.social@gmail.com",
-        to: "abdulkaiyumfahim.social@gmail.com",
-        subject: "Thanks for your order confirmation",
-        text: "Testing some Nodemailer awesomeness!",
-        html: `<div>
-    <h1>Thank you for your order!</h1>
-    <h4>Your transactionId: <strong>${payment.transactionId}</strong></h4>
-    <p>We would like to get your feedback about our foods</p>
-    </div>`,
-      };
-
-      // Send email
-      transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          return console.error(error);
-        }
-        console.log("Email sent: " + info.response);
-      });
 
       res.send({ paymentResult, deleteResult });
     });
