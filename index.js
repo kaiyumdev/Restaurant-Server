@@ -8,10 +8,20 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const formData = require("form-data");
 const Mailgun = require("mailgun.js");
 const mailgun = new Mailgun(formData);
-const mg = mailgun.client({
-  username: "api",
-  key: process.env.MAILGUN_API_KEY || "key-yourkeyhere",
+const nodemailer = require("nodemailer");
+
+// Create a transporter object using SMTP transport
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER, // Your email address
+    pass: process.env.EMAIL_PASSWORD, // Your email password or app-specific password
+  },
 });
+// const mg = mailgun.client({
+//   username: "api",
+//   key: process.env.MAILGUN_API_KEY || "key-yourkeyhere",
+// });
 
 app.use(express.json());
 app.use(cors());
@@ -237,20 +247,41 @@ async function run() {
       const deleteResult = await cartCollection.deleteMany(query);
 
       //send user email about payment confirmation
-      mg.messages
-        .create(process.env.MAIL_SENDING_DOMAIN, {
-          from: "Excited User <sandbox5ac71cee64804138bf131e2195d96133.mailgun.org>",
-          to: ["abdulkaiyumfahim.social@gmail.com"],
-          subject: "Thanks for your order confirmation",
-          text: "Testing some Mailgun awesomness!",
-          html: `<div>
-          <h1>Thank you for your order!</h1>
-          <h4>Your transactionId: <strong>${payment.transactionId}</strong></h4>
-          <p>We would like to get your feedback about our foods</p>
-          </div>`,
-        })
-        .then((msg) => console.log(msg)) // logs response data
-        .catch((err) => console.error(err)); // logs any error
+      // mg.messages
+      //   .create(process.env.MAIL_SENDING_DOMAIN, {
+      //     from: "Excited User <sandbox5ac71cee64804138bf131e2195d96133.mailgun.org>",
+      //     to: ["abdulkaiyumfahim.social@gmail.com"],
+      //     subject: "Thanks for your order confirmation",
+      //     text: "Testing some Mailgun awesomness!",
+      //     html: `<div>
+      //     <h1>Thank you for your order!</h1>
+      //     <h4>Your transactionId: <strong>${payment.transactionId}</strong></h4>
+      //     <p>We would like to get your feedback about our foods</p>
+      //     </div>`,
+      //   })
+      //   .then((msg) => console.log(msg)) // logs response data
+      //   .catch((err) => console.error(err)); // logs any error
+
+      const mailOptions = {
+        from: "abdulkaiyumfahim.social@gmail.com",
+        to: "abdulkaiyumfahim.social@gmail.com",
+        subject: "Thanks for your order confirmation",
+        text: "Testing some Nodemailer awesomeness!",
+        html: `<div>
+    <h1>Thank you for your order!</h1>
+    <h4>Your transactionId: <strong>${payment.transactionId}</strong></h4>
+    <p>We would like to get your feedback about our foods</p>
+    </div>`,
+      };
+
+      // Send email
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          return console.error(error);
+        }
+        console.log("Email sent: " + info.response);
+      });
+
       res.send({ paymentResult, deleteResult });
     });
 
