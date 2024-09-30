@@ -5,8 +5,13 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const port = process.env.PORT || 5002;
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
-const formData = require("form-data");
-const Mailgun = require("mailgun.js");
+// const formData = require("form-data");
+// const Mailgun = require("mailgun.js");
+// const express = require("express");
+const { Resend } = require("resend");
+
+// const app = express();
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // const mg = mailgun.client({
 //   username: "api",
@@ -251,6 +256,18 @@ async function run() {
       //   })
       //   .then((msg) => console.log(msg)) // logs response data
       //   .catch((err) => console.error(err)); // logs any error
+      await resend.emails.send({
+        from: "Acme <onboarding@resend.dev>",
+        to: ["abdulkaiyumfahim.social@gmail.com"],
+        subject: "Receipt for your payment",
+        html: "<p>Thanks for the payment</p>",
+        attachments: [
+          {
+            path: "https://resend.com/static/sample/invoice.pdf",
+            filename: "invoice.pdf",
+          },
+        ],
+      });
 
       res.send({ paymentResult, deleteResult });
     });
