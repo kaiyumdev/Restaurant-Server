@@ -260,7 +260,12 @@ async function run() {
         from: "Acme <onboarding@resend.dev>",
         to: ["abdulkaiyumfahim.social@gmail.com"],
         subject: "Receipt for your payment",
-        html: "<p>Thanks for the payment</p>",
+        html: `<div>
+          <h1>Thanks for the payment</h1>
+           <h1>Thank you for your order!</h1>
+           <h4>Your transactionId: <strong>${payment.transactionId}</strong></h4>
+         <p>We would like to get your feedback about our foods</p>
+           </div>`,
         attachments: [
           {
             path: "https://resend.com/static/sample/invoice.pdf",
